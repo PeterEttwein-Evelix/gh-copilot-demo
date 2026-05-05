@@ -1,0 +1,38 @@
+name: CI – Albums API
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "albums-api/**"
+      - "albums-api.Tests/**"
+      - ".github/workflows/ci-api.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "albums-api/**"
+      - "albums-api.Tests/**"
+      - ".github/workflows/ci-api.yml"
+
+jobs:
+  build-and-test:
+    name: Build & Test (.NET)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore gh-copilot-demo.sln
+
+      - name: Build
+        run: dotnet build gh-copilot-demo.sln --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test gh-copilot-demo.sln --no-build --configuration Release --verbosity normal
